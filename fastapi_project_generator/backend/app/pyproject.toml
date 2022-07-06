@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["Blake Johnson <blakeejohnson39@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+uvicorn = "^0.18.2"
+fastapi = "^0.78.0"
+celery = "^5.2.7"
+sentry-sdk = "^1.6.0"
+tenacity = "^8.0.1"
+emails = "^0.6"
+jose = "^1.0.0"
+SQLAlchemy = "^1.4.39"
+Jinja2 = "^3.1.2"
+pydantic = {extras = ["email"], version = "^1.9.1"}
+alembic = "^1.8.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+pre-commit = "^2.19.0"
+black = "^22.6.0"
+isort = "^5.10.1"
+flake8 = "^4.0.1"
+mypy = "^0.961"
+commitizen = "^2.28.0"
+pytest-cov = "^3.0.0"
+pytest-xdist = "^2.5.0"
+hypothesis = "^6.48.3"
+hypothesis-jsonschema = "^0.22.0"
+sqlalchemy-stubs = "^0.4"
+
+[tool.black]
+line-length = 88
+target-version = ["py37", "py38", "py39", "py310"]
+include = '\.pyi?$'
+
+[tool.isort]
+line_length = 88
+force_grid_wrap = 0
+include_trailing_comma = true
+multi_line_output = 3
+use_parentheses = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

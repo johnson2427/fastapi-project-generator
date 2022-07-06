@@ -1,0 +1,115 @@
+on: ["push", "pull_request"]
+
+name: Test
+
+jobs:
+    linting:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v2
+
+        - name: Setup Python
+          uses: actions/setup-python@v2
+          with:
+              python-version: 3.9
+
+        - name: Install Poetry
+          uses: snok/install-poetry@v1
+          with:
+            virtualenvs-path: ~/.virtualenvs
+
+        - name: Cache Poetry virtualenv
+          uses: actions/cache@v2
+          id: cache
+          with:
+            path: ~/.virtualenvs
+            key: poetry-${{ hashFiles('**/poetry.lock') }}
+            restore-keys: |
+              poetry-${{ hashFiles('**/poetry.lock') }}
+
+        - name: Set Poetry config
+          run: |
+            poetry config virtualenvs.in-project false
+            poetry config virtualenvs.path ~/.virtualenvs
+
+        - name: Install Dependencies
+          run: |
+            cd fastapi_project_generator/backend/app
+            poetry install
+          if: steps.cache.outputs.cache-hit != 'true'
+
+        - name: Run Black
+          run: |
+            cd fastapi_project_generator/backend/app
+            poetry run black --check .
+
+        - name: Run flake8
+          run: |
+            cd fastapi_project_generator/backend/app
+            poetry run flake8 .
+
+        - name: Run isort
+          run: |
+            cd fastapi_project_generator/backend/app
+            poetry run isort --check-only .
+
+    type-check:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v2
+
+        - name: Setup Python
+          uses: actions/setup-python@v2
+          with:
+              python-version: 3.9
+
+        - name: Install Poetry
+          uses: snok/install-poetry@v1
+          with:
+            virtualenvs-path: ~/.virtualenvs
+
+        - name: Cache Poetry virtualenv
+          uses: actions/cache@v2
+          id: cache
+          with:
+            path: ~/.virtualenvs
+            key: poetry-${{ hashFiles('**/poetry.lock') }}
+            restore-keys: |
+              poetry-${{ hashFiles('**/poetry.lock') }}
+
+        - name: Set Poetry config
+          run: |
+            poetry config virtualenvs.in-project false
+            poetry config virtualenvs.path ~/.virtualenvs
+
+        - name: Install Dependencies
+          run: |
+            cd fastapi_project_generator/backend/app
+            poetry install
+          if: steps.cache.outputs.cache-hit != 'true'
+
+        - name: Run MyPy
+          run: |
+            cd fastapi_project_generator/backend/app
+            poetry run mypy .
+
+    functional:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: |
+            actions/checkout@v2
+            actions/setup-node@v1
+          with:
+            node-version: 17.5.0
+
+        - name: Build the stack
+          run: |
+            cd fastapi-cookie-cutter
+            docker-compose up -d
+
+        - name: Run Tests
+          run: |
+            cd fastapi-cookie-cutter
+            sh ./scripts/test.sh
